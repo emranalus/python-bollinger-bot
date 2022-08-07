@@ -10,15 +10,6 @@ sembol = 'ETHUSDT'
 sellSembol = 'ETH'
 isInPosition = False
 
-# şimdilik dursun kullanılmıyor ama lazım olur
-def getFuturesBalance(symbol):
-    acc_balance = client.futures_account_balance()
-
-    for check_balance in acc_balance:
-        if check_balance["asset"] == symbol:
-            usdt_balance = check_balance["balance"]
-            return usdt_balance
-
 
 def nekadarCoinAlinir(bakiye, fiyat):
     buy_quant = bakiye / float(fiyat)
@@ -86,14 +77,6 @@ def applyTechnicals(df):
     df['Lower'] = df.SMA - 2 * df.stddev
 
     df.dropna(inplace=True)
-
-
-def farkYuzdeHesapla(enter, current):
-    fark = enter - current
-    bolum = fark / enter
-    farkYuzdesi = bolum * 100
-
-    return farkYuzdesi
 
 
 print("Trade Bot Çalışmaya Başlıyor...")
