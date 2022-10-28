@@ -3,17 +3,26 @@ import pandas as pd
 import config
 import time
 
-client = Client(api_key=config.PublicKey, api_secret=config.SecretKey)
+client = Client(api_key='API PUBLIC KEY HERE', api_secret='API SECRET KEY HERE')
 
 # Parametreler
-sembol = 'ETHUSDT'
-sellSembol = 'ETH'
+print("WARNING: Only USDT parities are allowed!")
+sembol = input("Enter Parity(ex. ETHUSDT): ")
+sellSembol = sembol[:-4]
 isInPosition = False
-
 
 def nekadarCoinAlinir(bakiye, fiyat):
     buy_quant = bakiye / float(fiyat)
     return buy_quant
+
+
+def get_quantity_precision(currency_symbol):    
+    info = client.get_exchange_info() 
+    info = info['symbols']
+    for x in range(len(info)):
+        if info[x]['symbol'] == currency_symbol:
+            return info[x]['pricePrecision']
+    return None
 
 
 def bakiyem():
@@ -30,7 +39,7 @@ def buyOrder():
                             side=Client.SIDE_BUY,
                             type=Client.ORDER_TYPE_MARKET,
                             quantity=round(float(round(nekadarCoinAlinir(bakiyem(), guncelfiyat(sembol)), 5)) * 0.98,
-                                           4))
+                                           get_quantity_precision(sembol)))
         print("BUY ORDER: " + str(guncelfiyat(sembol)) + " " + sembol)
     except:
         time.sleep(5)
@@ -38,7 +47,7 @@ def buyOrder():
                             side=Client.SIDE_BUY,
                             type=Client.ORDER_TYPE_MARKET,
                             quantity=round(float(round(nekadarCoinAlinir(bakiyem(), guncelfiyat(sembol)), 5)) * 0.98,
-                                           4))
+                                           get_quantity_precision(sembol)))
         print("BUY ORDER: " + str(guncelfiyat(sembol)) + " " + sembol)
 
 
@@ -47,14 +56,14 @@ def sellOrder():
         client.create_order(symbol=sembol,
                             side=Client.SIDE_SELL,
                             type=Client.ORDER_TYPE_MARKET,
-                            quantity=round(float(client.get_asset_balance(sellSembol)['free']) * 0.99, 4))
+                            quantity=round(float(client.get_asset_balance(sellSembol)['free']) * 0.99, get_quantity_precision(sembol)))
         print("SELL ORDER: " + str(guncelfiyat(sembol)) + " " + sembol)
     except:
         time.sleep(5)
         client.create_order(symbol=sembol,
                             side=Client.SIDE_SELL,
                             type=Client.ORDER_TYPE_MARKET,
-                            quantity=round(float(client.get_asset_balance(sellSembol)['free']) * 0.99, 4))
+                            quantity=round(float(client.get_asset_balance(sellSembol)['free']) * 0.99, get_quantity_precision(sembol)))
         print("SELL ORDER: " + str(guncelfiyat(sembol)) + " " + sembol)
 
 
@@ -83,7 +92,7 @@ print("Trade Bot Çalışmaya Başlıyor...")
 # Main Programme
 while True:
     # Parite, Timeframe, Lookback(En son mum artı ne kadar geriye baksın{Mesela en son mum ve 100 önceki mum})
-    df = getMinuteData(sembol, '5m', '100')
+    df = getMinuteData(sembol, '5m', '20000')
     applyTechnicals(df)
 
     # Main Program
