@@ -5,4 +5,4 @@ Simple Bollinger Band Bot
 It's very simple change the api keys and target coin(sembol).
 
 # Legal Disclaimer
-This is a demonstration code only use if you take the risk yourself.
+This is a demonstration code only, I am not responsible for any financial gain or loss.
